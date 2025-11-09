@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formula Test</title>
+    <script src="datasource.js" defer></script>
+    <script src="formulas.js" defer></script>
+    <script src="interactivity.js" defer></script>
+    <style>
+        h1, h2 {
+            width: 80vw;
+            margin: 0 auto;
+        }
+        #inputs {
+            display: flex;
+            gap: 20px;
+            width: 60vw;
+            margin: 20px auto;
+            justify-content: space-between;
+            align-items: center;
+        }
+        #results-container {
+            width: 80vw;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+        }
+        .impact-result {
+            border: 1px solid black;
+            border-radius: 10px;
+            padding: 20px;
+            width: 350px;
+            text-align: center;
+        }
+        select#people-select {
+            font-size: 1.2em;
+            padding: 5px;
+        }
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 15px;
+            border-radius: 5px;  
+            background: #d3d3d3;
+            outline: none;
+            opacity: 0.7;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%; 
+            background: #04AA6D;
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #04AA6D;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>What can one person do?</h1>
+    <h2>Tap into your spheres of influence and see your efforts multiply!</h2>
+    <div id="inputs">
+    <select id="people-select">
+        <option value="1">Just Me</option>
+        <option value="10">Family & Friends (10)</option>
+        <option value="100">Community Group (100)</option>
+        <option value="1000">Organization (1,000)</option>
+        <option value="10000">Company (10,000)</option>
+        <option value="100000">City (100,000)</option>
+        <option value="1000000">Region (1,000,000)</option>
+    </select>
+    <div class="slidecontainer">
+        <label slot="label">Percentage Vegan Diet: <span id="percentage-value">0%</span></label>
+        <input type="range" min="0" max="1" step="0.01" value="0" class="slider" id="percentage-slider">
+    </div>
+    </div>
+    <div id="results">
+        <h2>Results</h2>
+        <div id="results-container"></div>
+    </div>
+</body>
+</html>
