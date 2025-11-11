@@ -23,8 +23,9 @@ const calcAnimalsSlaughtered = (type, people, percentage) => {
     const dataSource = DATA_SOURCE.find(item => item["Food Group"] === type);
     const totalConsumption = adjustedConsumption(type, percentage);
     const animals = dataSource["Average Dressed Weight (kg)"] > 0 
-        ? totalConsumption * dataSource["Average Dressed Weight (kg)"] * people
+        ? totalConsumption / dataSource["Average Dressed Weight (kg)"] * people
         : 0;
+    console.log(`Type: ${type}, Animals Slaughtered: ${animals}, Average Dressed Weight: ${dataSource["Average Dressed Weight (kg)"]}, Adjusted Consumption: ${totalConsumption}, Percentage: ${percentage}, People: ${people}`);
     return animals;
 };
 
@@ -41,11 +42,15 @@ const calcAnimalsSaved = (type, people, percentage) => {
         : 0;
     return saved;
 };
-
+const aggregateImpact = (key, people, percentage) => {
+    return types.reduce((sum, type) => sum + calcImpact(type, key, percentage, people), 0);
+}
 const aggregateImpactSaved = (impact, people, percentage) => {
     return types.reduce((total, type) => total + calcImpactSaved(type, impact, percentage, people), 0);
 };
-
+const aggregateAnimalsSlaughtered = (people, percentage) => {
+    return types.reduce((total, type) => total + calcAnimalsSlaughtered(type, people, percentage), 0);
+}
 const aggregateAnimalsSaved = (people, percentage) => {
     return types.reduce((total, type) => total + calcAnimalsSaved(type, people, percentage), 0);
 };
@@ -62,6 +67,7 @@ const calcBaselineAnimalsSlaughtered = (people) => {
         const animals = dataSource["Average Dressed Weight (kg)"] > 0 
             ? totalConsumption / dataSource["Average Dressed Weight (kg)"] * people
             : 0;
+        console.log(`Type: ${type}, Baseline Animals Slaughtered: ${animals}, Total Consumption: ${totalConsumption}, People: ${people}`);
         return total + animals;
     }, 0);
 }
@@ -70,15 +76,19 @@ const updateAllCalculations = (people, percentage) => {
         return {
             key: key,
             impact: impact, 
-            saved: aggregateImpactSaved(impact, people, percentage).toFixed(2), 
-            baseline: calcBaselineImpact(impact, people).toFixed(2)
+            total: aggregateImpact(impact, people, percentage),
+            saved: aggregateImpactSaved(impact, people, percentage), 
+            baseline: calcBaselineImpact(impact, people),
+            percentChange: (((aggregateImpact(impact, people, percentage)-calcBaselineImpact(impact,people)) / calcBaselineImpact(impact, people)) * 100)
         };
     });
     stats.push({
         key: "animals",
         impact: "Animals", 
-        saved: aggregateAnimalsSaved(people, percentage).toFixed(0), 
-        baseline: calcBaselineAnimalsSlaughtered(people).toFixed(0)
+        total: aggregateAnimalsSlaughtered(people, percentage),
+        saved: aggregateAnimalsSaved(people, percentage), 
+        baseline: calcBaselineAnimalsSlaughtered(people),
+        percentChange: (((aggregateAnimalsSlaughtered(people, percentage)-calcBaselineAnimalsSlaughtered(people)) / calcBaselineAnimalsSlaughtered(people)) * 100)
     });
     return stats;
 };
